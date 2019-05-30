@@ -99,21 +99,91 @@ class MyParser:
 		self.session()
 	
 			
-	def session(self):
-		""" Session  -> Facts Question | ( Session ) Session """
-		
-		if self.la=='!' or self.la=='?':
-			self.facts()
-			self.question()
-		elif self.la=='(':
-			self.match('(')
-			self.session()
-			self.match(')')
-			self.session()	
-		else:
-			raise ParseError("in session: !, ? or ( expected")
-			 	
+	def statement_list(self):
+		if self.la=='id' or self.la=='print':
+			self.statement()
+			self.statement_list()
+			
+		elif  self.la==None:
+			return
+
+
+	def statement(self):
+		if self.la=='id':
+			self.match('id')
+			self.match('=')
+			self.expretion()
+			
+		elif self.la=='print':
+			self.match('print')
+			self.expretion()
 	
+	
+	def expretion(self):
+		if self.la=='parentheniL' or self.la=='id' or self.la=='number':
+			self.term()
+			self.term_tail()
+			
+			
+	def term_tail(self):
+		if self.la=='xor':
+			self.match('xor')
+			self.term()
+			self.term_tail()
+		
+		elif self.la=='parentheniR' or self.la=='id' or self.la=='print':
+			return
+		
+	
+	def term(self):
+		if self.la=='parentheniL' or self.la=='id' or self.la=='number':
+			self.factor()
+			self.factor_tail()
+		
+		
+	def factor_tail(self):
+		if self.la=='or':
+			self.match('or')
+			self.factor()
+			self.factor_tail()		
+		
+		elif self.la=='parentheniR' or self.la=='xor' or self.la=='id' or self.la=='print':
+			return
+
+		
+	def factor(self):
+		if self.la=='parentheniL' or self.la=='id' or self.la=='number':
+			self.atom()
+			self.atom_tail()
+		
+		
+	def atom_tail(self):
+		if self.la=='and':
+			self.match('and')
+			self.atom()
+			self.atom_tail()		
+		
+		elif self.la=='parentheniR' or self.la=='xor' or self.la=='id' or self.la=='print':
+			return		
+		
+		
+		
+	def atom(self):
+		if self.la=='parentheniL':
+			self.match('parentheniL')
+			self.expretion()
+			self.match('parentheniR')
+		
+		elif self.la=='id':
+			self.match('id')
+			
+		elif self.la=='number':
+			self.match('number')
+	
+	
+	
+	
+'''									sxolia palios kodikas	
 	def facts(self):
 		""" Facts -> Fact Facts | ε """
 		
@@ -145,6 +215,9 @@ class MyParser:
 		else:
 			raise ParseError("in question: ? expected")
 
+					
+					sxolia palios kodikas
+'''
 		
 # the main part of prog
 
