@@ -46,17 +46,34 @@ class MyParser:
 
 		# define some pattern constructs
 		letter = plex.Range("AZaz")
-		digit = plex.Range("09")
-
-		string = plex.Rep1(letter | digit)
-		operator = plex.Any("!?()")		
+		demicalDigit = plex.Range("09")
+		binaryDigit = plex.Range('01')
+		
+		equals = plex.Str('=')
+		parentheniL = plex.Str('(')
+		parentheniR = plex.Str(')')
+		binaryNumber =plex.Rep1(binaryDigit)		
+		name = letter + plex.Rep(letter | demicalDigit )
 		space = plex.Any(" \t\n")
+		print_key = plex.Str('print')
+		andOperator = plex.Str('and')			
+		orOperator = plex.Str('or')
+		xorOperator = plex.Str('xor')		
+
+
 
 		# the scanner lexicon - constructor argument is a list of (pattern,action ) tuples
 		lexicon = plex.Lexicon([
-			(operator,plex.TEXT),
 			(space,plex.IGNORE),
-			(string, 'string')
+			(parentheniL, plex.TEXT),
+			(parentheniR, plex.TEXT),
+			(equals, plex.TEXT),
+			(print_key, 'print'),
+			(binaryNumber, 'number'),
+			(andOperator, plex.TEXT),
+			(orOperator, plex.TEXT),
+			(xorOperator, plex.TEXT),
+			(name, 'id' )
 			])
 		
 		# create and store the scanner object
@@ -96,7 +113,7 @@ class MyParser:
 		self.create_scanner(fp)
 		
 		# call parsing logic
-		self.session()
+		self.statement_list()
 	
 			
 	def statement_list(self):
@@ -131,7 +148,7 @@ class MyParser:
 	
 	def expretion(self):
 		
-		if self.la=='parentheniL' or self.la=='id' or self.la=='number':
+		if self.la=='(' or self.la=='id' or self.la=='number':
 			self.term()
 			self.term_tail()
 			
@@ -147,7 +164,7 @@ class MyParser:
 			self.term()
 			self.term_tail()
 		
-		elif self.la=='parentheniR' or self.la=='id' or self.la=='print':
+		elif self.la==')' or self.la=='id' or self.la=='print' or self.la == None :
 			return
 		
 		else:
@@ -158,7 +175,7 @@ class MyParser:
 	
 	def term(self):
 		
-		if self.la=='parentheniL' or self.la=='id' or self.la=='number':
+		if self.la=='(' or self.la=='id' or self.la=='number':
 			self.factor()
 			self.factor_tail()
 			
@@ -174,7 +191,7 @@ class MyParser:
 			self.factor()
 			self.factor_tail()
 			
-		elif self.la=='parentheniR' or self.la=='xor' or self.la=='id' or self.la=='print':
+		elif self.la==')' or self.la=='xor' or self.la=='id' or self.la=='print' or self.la == None :
 			return
 		
 		else:
@@ -184,7 +201,7 @@ class MyParser:
 		
 	def factor(self):
 		
-		if self.la=='parentheniL' or self.la=='id' or self.la=='number':
+		if self.la=='(' or self.la=='id' or self.la=='number':
 			self.atom()
 			self.atom_tail()
 			
@@ -200,7 +217,7 @@ class MyParser:
 			self.atom()
 			self.atom_tail()		
 		
-		elif self.la=='parentheniR' or self.la=='xor' or self.la=='id' or self.la=='print':
+		elif self.la==')' or self.la=='xor' or self.la=='id' or self.la=='print' or self.la == None :
 			return
 		
 		else:
@@ -210,10 +227,10 @@ class MyParser:
 		
 	def atom(self):
 		
-		if self.la=='parentheniL':
-			self.match('parentheniL')
+		if self.la=='(':
+			self.match(')')
 			self.expretion()
-			self.match('parentheniR')
+			self.match(')')
 		
 		elif self.la=='id':
 			self.match('id')
