@@ -100,15 +100,21 @@ class MyParser:
 	
 			
 	def statement_list(self):
+		
 		if self.la=='id' or self.la=='print':
 			self.statement()
 			self.statement_list()
 			
 		elif  self.la==None:
 			return
-
+		
+		else:
+			raise ParseError("in statement_list: id or print expected")
+			
+			
 
 	def statement(self):
+		
 		if self.la=='id':
 			self.match('id')
 			self.match('=')
@@ -117,15 +123,25 @@ class MyParser:
 		elif self.la=='print':
 			self.match('print')
 			self.expretion()
-	
+			
+		else:
+			raise ParseError("in statement: id or print expected")
+			
+			
 	
 	def expretion(self):
+		
 		if self.la=='parentheniL' or self.la=='id' or self.la=='number':
 			self.term()
 			self.term_tail()
 			
+		else:
+			raise ParseError("in expretion: ( or id or number expected")
+			
+			
 			
 	def term_tail(self):
+		
 		if self.la=='xor':
 			self.match('xor')
 			self.term()
@@ -134,41 +150,66 @@ class MyParser:
 		elif self.la=='parentheniR' or self.la=='id' or self.la=='print':
 			return
 		
+		else:
+			raise ParseError("in term_tail: xor expected")
+		
+	
+		
 	
 	def term(self):
+		
 		if self.la=='parentheniL' or self.la=='id' or self.la=='number':
 			self.factor()
 			self.factor_tail()
-		
+			
+		else:
+			raise ParseError("in factor: ( or id or number expected")
+			
+			
 		
 	def factor_tail(self):
+		
 		if self.la=='or':
 			self.match('or')
 			self.factor()
-			self.factor_tail()		
-		
+			self.factor_tail()
+			
 		elif self.la=='parentheniR' or self.la=='xor' or self.la=='id' or self.la=='print':
 			return
-
+		
+		else:
+			raise ParseError("in factor_tail: or expected")
+			
+		
 		
 	def factor(self):
+		
 		if self.la=='parentheniL' or self.la=='id' or self.la=='number':
 			self.atom()
 			self.atom_tail()
+			
+		else:
+			raise ParseError("in factor: ( or id or number expected")	
+			
 		
 		
 	def atom_tail(self):
+		
 		if self.la=='and':
 			self.match('and')
 			self.atom()
 			self.atom_tail()		
 		
 		elif self.la=='parentheniR' or self.la=='xor' or self.la=='id' or self.la=='print':
-			return		
+			return
+		
+		else:
+			raise ParseError("in atom_tail: and expected")			
 		
 		
 		
 	def atom(self):
+		
 		if self.la=='parentheniL':
 			self.match('parentheniL')
 			self.expretion()
@@ -179,9 +220,12 @@ class MyParser:
 			
 		elif self.la=='number':
 			self.match('number')
+			
+		else:
+			raise ParseError("in atom: ( or id or number expected")		
 	
-	
-	
+
+
 	
 '''									sxolia palios kodikas	
 	def facts(self):
