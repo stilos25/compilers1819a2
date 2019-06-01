@@ -146,7 +146,8 @@ class MyParser:
         elif self.la == 'print':
             self.match('print')
             expr = self.expretion()
-            print('= {:b}'.format(expr))
+
+            print('= {:b} '.format(expr))
             
         else:
             raise ParseError("in statement: id or print expected")
@@ -161,7 +162,7 @@ class MyParser:
             while self.la == 'xor':
                 self.match('xor')
                 ter2 = self.term()
-                print('xor : {:b} xor {:b} '.format(ter,ter2))
+                print(' | {:b} xor {:b} '.format(ter,ter2), end = "")
                 ter = ter ^ ter2
                 
             if self.la == ')' or self.la == 'id' or self.la == 'print' or self.la == None:
@@ -182,7 +183,7 @@ class MyParser:
             while self.la == 'or':
                 self.match('or')
                 fac2 = self.factor()
-                print('or : {:b} or {:b} '.format(fac,fac2))
+                print(' | {:b} or {:b} '.format(fac,fac2), end = "")
                 fac = fac | fac2
                 
             if self.la == ')' or self.la == 'xor' or self.la == 'id' or self.la == 'print' or self.la == None:
@@ -203,7 +204,7 @@ class MyParser:
             while self.la == 'and':
                 self.match('and')
                 ato2 = self.atom()
-                print('and : {:b} and {:b} '.format(ato,ato2))
+                print(' | {:b} and {:b} '.format(ato,ato2), end = "")
                 ato = ato & ato2
                 
             if self.la == ')' or self.la == 'or' or self.la == 'xor' or self.la == 'id' or self.la == 'print' or self.la == None:
@@ -234,7 +235,7 @@ class MyParser:
     def atom(self):
         
         if self.la == '(':
-            self.match(')')
+            self.match('(')
             expr = self.expretion()
             self.match(')')
             return(expr)
@@ -303,13 +304,4 @@ parser = MyParser()
 
 # open file for parsing
 with open("recursive-descent-parsing.txt","r") as fp:
-
-    # parse file
-    try:
         parser.parse(fp)
-    except plex.errors.PlexError:
-        _,lineno,charno = parser.position()	
-        print("Scanner Error: at line {} char {}".format(lineno,charno+1))
-    except ParseError as perr:
-        _,lineno,charno = parser.position()	
-        print("Parser Error: {} at line {} char {}".format(perr,lineno,charno+1))
