@@ -100,7 +100,7 @@ class MyParser:
 		""" Consumes (matches with current lookahead) an expected token.
 		Raises ParseError if anything else is found. Acquires new lookahead. """ 
 		
-		if self.la==token:
+		if self.la == token:
 			self.la,self.val = self.next_token()
 		else:
 			raise ParseError("found {} instead of {}".format(self.la,token))
@@ -118,11 +118,11 @@ class MyParser:
 			
 	def statement_list(self):
 		
-		if self.la=='id' or self.la=='print':
+		if self.la == 'id' or self.la == 'print':
 			self.statement()
 			self.statement_list()
 			
-		elif  self.la==None:
+		elif  self.la == None:
 			return
 		
 		else:
@@ -132,12 +132,12 @@ class MyParser:
 
 	def statement(self):
 		
-		if self.la=='id':
+		if self.la == 'id':
 			self.match('id')
 			self.match('=')
 			self.expretion()
 			
-		elif self.la=='print':
+		elif self.la == 'print':
 			self.match('print')
 			self.expretion()
 			
@@ -148,7 +148,7 @@ class MyParser:
 	
 	def expretion(self):
 		
-		if self.la=='(' or self.la=='id' or self.la=='number':
+		if self.la == '(' or self.la == 'id' or self.la == 'number':
 			self.term()
 			self.term_tail()
 			
@@ -164,7 +164,7 @@ class MyParser:
 			self.term()
 			self.term_tail()
 		
-		elif self.la==')' or self.la=='id' or self.la=='print' or self.la == None :
+		elif self.la == ')' or self.la == 'id' or self.la == 'print' or self.la == None :
 			return
 		
 		else:
@@ -175,23 +175,23 @@ class MyParser:
 	
 	def term(self):
 		
-		if self.la=='(' or self.la=='id' or self.la=='number':
+		if self.la == '(' or self.la == 'id' or self.la == 'number':
 			self.factor()
 			self.factor_tail()
 			
 		else:
-			raise ParseError("in factor: ( or id or number expected")
+			raise ParseError("in term: ( or id or number expected")
 			
 			
 		
 	def factor_tail(self):
 		
-		if self.la=='or':
+		if self.la == 'or':
 			self.match('or')
 			self.factor()
 			self.factor_tail()
 			
-		elif self.la==')' or self.la=='xor' or self.la=='id' or self.la=='print' or self.la == None :
+		elif self.la == ')' or self.la == 'xor' or self.la == 'id' or self.la=='print' or self.la == None :
 			return
 		
 		else:
@@ -201,7 +201,7 @@ class MyParser:
 		
 	def factor(self):
 		
-		if self.la=='(' or self.la=='id' or self.la=='number':
+		if self.la == '(' or self.la == 'id' or self.la == 'number':
 			self.atom()
 			self.atom_tail()
 			
@@ -212,12 +212,12 @@ class MyParser:
 		
 	def atom_tail(self):
 		
-		if self.la=='and':
+		if self.la == 'and':
 			self.match('and')
 			self.atom()
 			self.atom_tail()		
 		
-		elif self.la==')' or self.la=='xor' or self.la=='id' or self.la=='print' or self.la == None :
+		elif self.la == ')' or self.la == 'xor' or self.la == 'id' or self.la=='print' or self.la == None :
 			return
 		
 		else:
@@ -227,15 +227,15 @@ class MyParser:
 		
 	def atom(self):
 		
-		if self.la=='(':
+		if self.la == '(':
 			self.match(')')
 			self.expretion()
 			self.match(')')
 		
-		elif self.la=='id':
+		elif self.la == 'id':
 			self.match('id')
 			
-		elif self.la=='number':
+		elif self.la == 'number':
 			self.match('number')
 			
 		else:
@@ -248,10 +248,10 @@ class MyParser:
 	def facts(self):
 		""" Facts -> Fact Facts | ε """
 		
-		if self.la=='!':
+		if self.la == '!':
 			self.fact()
 			self.facts()
-		elif self.la=='?':	# from FOLLOW set!
+		elif self.la == '?':	# from FOLLOW set!
 			return
 		else:
 			raise ParseError("in facts: ! or ? expected")
@@ -260,7 +260,7 @@ class MyParser:
 	def fact(self):
 		""" Fact -> ! string """
 		
-		if self.la=='!':
+		if self.la == '!':
 			self.match('!')
 			self.match('string')
 		else:
@@ -270,7 +270,7 @@ class MyParser:
 	def question(self):
 		""" Question -> ? string """
 		
-		if self.la=='?':
+		if self.la == '?':
 			self.match('?')
 			self.match('string')
 		else:
